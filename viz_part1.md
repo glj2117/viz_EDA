@@ -230,7 +230,8 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_binhex).
 
-![](viz_part1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](viz_part1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> \##
+Historgrams
 
 ``` r
 weather_df %>%
@@ -243,4 +244,50 @@ weather_df %>%
 
     ## Warning: Removed 3 rows containing non-finite values (stat_bin).
 
-![](viz_part1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](viz_part1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- --> \##
+Density plot
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) +
+  geom_density(alpha = .3)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- --> \## Box
+Plot
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_boxplot()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-12-1.png)<!-- --> \##
+Violin Plots
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-13-1.png)<!-- --> \## Ridge
+Plot (type of density plot)
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, y = name)) +
+  geom_density_ridges()
+```
+
+    ## Picking joint bandwidth of 1.84
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
