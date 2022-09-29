@@ -1,59 +1,142 @@
 ---
-title: "Simple document"
+title: "viz_part_1"
+author: "Gabriela Jackson"
 output: 
   github_document
 
-
 ---
 
-```{r, echo = FALSE, message = FALSE}
+```{r setup, echo = FALSE}
 library(tidyverse)
+library(ggridges)
 ```
-
-I'm an R Markdown document! 
 
 # Section 1
-
-Here's a **code chunk** that samples from 
-a _normal distribution_:
+ Code copied from course website. Load NOAA dataset.
 
 ```{r}
-samp = rnorm(100)
-length(samp)
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
+  mutate(
+    name = recode(
+      id, 
+      USW00094728 = "CentralPark_NY", 
+      USC00519397 = "Waikiki_HA",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
 ```
 
-# Section 2
+# Scatterplot
+Need to define three things: dataset, aesthetic mappings, and geometry. 
 
-I can take the mean of the sample, too!
-The mean is `r mean(samp)`.
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) ##blank, need to add geom()
 
-# Section 3
+ggplot(weather_df, aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+Scatterplot, but different. Same code but using piping.
+```{r}
+weather_df %>%
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
 
-This is going to make a plot! First I generate a dataframe, then use `ggplot` to make a scatterplot.
+##Can filter out before ggplot in the same code using piping.
 
-```{r chunk_scatterplot}
-plot_df =
-  tibble(
-    x = rnorm(n = 1000),
-    y = 1 + 2 * x + rnorm(n = 1000)
-  )
+weather_df %>%
+  drop_na() %>% 
+  filter(name == "CentralPark_NY") %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point()
+```
+Keep making the same plot but different. Make a plot and save it, then add geom. 
 
+```{r}
+weather_scatterplot =
+  weather_df %>% 
+  drop_na() %>% 
+  ggplot(aes(x = tmin, y = tmax))
 
-ggplot(plot_df, aes(x = x, y = y)) + geom_point()
+weather_scatterplot +
+  geom_point()
+```
+Fancy
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point()
+
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = name)) +
+  geom_smooth()
+##Color aesthetic mapping applies only to scatterplot.
+
+#vs.
+
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point() +
+  geom_smooth()
+
+##Here color aesthetic mapping applies to everything (plot + smooth). 
+```
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .3) + #transparent points (alpha blending)
+  geom_smooth(se = FALSE) #gets rid of error bars
+
+```
+maybe make separate panels:
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .3) + 
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~name)
+ 
 ```
 
+# Seasonal trends
+
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point(alpha = .3) + 
+  geom_smooth(se = FALSE)
+ 
+
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point(aes(size = prcp), alpha = .3) + 
+  geom_smooth(se = FALSE) +
+  facet_grid(.~name) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) #rotate x axis labels
+
+```
+Hex
+```{r}
+ weather_df %>% 
+ ggplot(aes(x = tmax, y = tmin)) + 
+  geom_hex()
+
 ```
 
-```{r chunk_learning assessment}
-la_df = 
-  tibble(
-      norm = rnorm(n = 500, mean = 1),
-      logical = norm > 0,
-    abs_norm = abs(norm)
-  )
-
-ggplot(la_df, aes(x = abs_norm)) + geom_histogram()
-  
+```{r}
+weather_df %>%
+  ggplot(aes(x = tmax, fill = name)) + #if you do color it is the lines outside 
+  geom_histogram() +
+  facet_grid(.~name)
 
 ```
 
