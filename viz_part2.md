@@ -85,7 +85,7 @@ weather_df %>%
 Make a new version
 
 ``` r
-weather_df %>% 
+ggp_weather = weather_df %>% 
   ggplot(aes(x = tmin, y = tmax, color = name)) +
   geom_point(alpha = .5) +
   labs(
@@ -99,9 +99,49 @@ weather_df %>%
     discrete = TRUE)
 ```
 
-    ## Warning: Removed 15 rows containing missing values (geom_point).
-
-![](viz_part2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- --> Can use
-scale_color_hue instead, but viridis color pallete is better.
+Can use scale_color_hue instead, but viridis color pallete is better.
 
 scale_color_hue( name = “Location”, h = c(100, 300))
+
+## Themes
+
+``` r
+ggp_weather +
+  theme_bw() #instead of grey background
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_part2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+ggp_weather +
+  theme_classic() #gets rid of gridlines
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_part2_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+
+``` r
+ggp_weather + 
+  theme_minimal() + #gridlines but no outline box 
+  theme(legend.position = "bottom") #if you switch the order, theme minimal will override the legend position
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_part2_files/figure-gfm/unnamed-chunk-4-3.png)<!-- --> \##
+Setting options (as first code chunk)
+
+library(tidyverse)
+
+knitr::opts_chunk\$set( fig.width = 6, fig.asp = .6, out.width = “90%” )
+
+theme_set(theme_minimal() + theme(legend.position = “bottom”))
+
+options( ggplot2.continuous.colour = “viridis”, ggplot2.continuous.fill
+= “viridis” )
+
+scale_colour_discrete = scale_colour_viridis_d scale_fill_discrete =
+scale_fill_viridis_d
