@@ -54,3 +54,54 @@ weather_df =
     ## date created (size, mb): 2022-09-29 10:32:19 (0.95)
 
     ## file min/max dates: 1999-09-01 / 2022-09-30
+
+\##Scatterplot but better this time
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    x = "Minimum Daily Temp (C)",
+    y = "Maximum Daily Temp (C)", 
+    title = "Scatterplot of daily temp extremes",
+    caption = "Data come from the rnoaa package"
+  ) +
+  scale_x_continuous(
+    breaks = c(-10, 0, 15),
+    labels = c("-10C", "0", "15")
+  )
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_part2_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+``` r
+   #scale_y_continuous(
+    #trans = "sqrt")
+```
+
+Make a new version
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    x = "Minimum Daily Temp (C)",
+    y = "Maximum Daily Temp (C)", 
+    title = "Scatterplot of daily temp extremes",
+    caption = "Data come from the rnoaa package"
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_part2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- --> Can use
+scale_color_hue instead, but viridis color pallete is better.
+
+scale_color_hue( name = “Location”, h = c(100, 300))

@@ -31,4 +31,45 @@ weather_df =
     tmax = tmax / 10) %>%
   select(name, id, everything())
 ```
+##Scatterplot but better this time
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    x = "Minimum Daily Temp (C)",
+    y = "Maximum Daily Temp (C)", 
+    title = "Scatterplot of daily temp extremes",
+    caption = "Data come from the rnoaa package"
+  ) +
+  scale_x_continuous(
+    breaks = c(-10, 0, 15),
+    labels = c("-10C", "0", "15")
+  )
+ 
+  
+   #scale_y_continuous(
+    #trans = "sqrt")
+  
+```
+Make a new version
+```{r}
 
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    x = "Minimum Daily Temp (C)",
+    y = "Maximum Daily Temp (C)", 
+    title = "Scatterplot of daily temp extremes",
+    caption = "Data come from the rnoaa package"
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location",
+    discrete = TRUE)
+  
+```
+Can use scale_color_hue instead, but viridis color pallete is better. 
+
+scale_color_hue(
+    name = "Location", h = c(100, 300))
