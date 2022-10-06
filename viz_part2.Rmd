@@ -9,6 +9,7 @@ output:
 ```{r setup, echo = FALSE}
 library(tidyverse)
 library(ggridges)
+library(patchwork)
 ```
 
 # Section 1
@@ -106,4 +107,92 @@ options(
 
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
+
+## Data in geom()
+
+```{r}
+central_park_df =
+  weather_df %>% 
+  filter(name == "CentralPark_NY")
+
+waikiki_df = 
+  weather_df %>% 
+  filter(name == "Waikiki_HA")
+
+ggplot(waikiki_df, aes(x = date, y = tmax)) +
+  geom_point() + 
+  geom_line(data = central_park_df) #could add separate dataset that included monthly averages, for example
+
+```
+## Patchwork...
+Figure that has multiple panels, each is *fundamentally different*, but side by side (not single ggplot with faceting!)
+```{r}
+
+tmax_tmin_plot =
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmin, color = name)) +
+  geom_point() +
+  theme(legend.position = "none")
+
+prcp_density_plot =
+  weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, fill = name)) +
+  geom_density() +
+  theme(legend.position = "none")
+
+seasonality_plot =
+  weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE) +
+  theme(legend.position = "none")
+
+#Patchwork package
+(tmax_tmin_plot + prcp_density_plot) / seasonality_plot
+
+```
+## Data manipulation
+R assumes x axis is a factor, automatically changes a character to factor, and then assumes alphabetical ordering, which is why the x axis is automatically in alphabetical order. 
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+
+#relevel the name as a factor variable where Waikiki is the first value
+weather_df %>% 
+  mutate(name = fct_relevel(name, "Waikiki_HA")) %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+
+#In order of the value (median) (of tmax in this case)
+weather_df %>% 
+  mutate(name = fct_reorder(name, tmax)) %>% 
+  ggplot(aes(x = name, y = tmax)) +
+  geom_boxplot()
+
+```
+
+```{r}
+pulse_df =
+  haven::read_sas("data/public_pulse_data.sas7bdat") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit",
+    values_to = "bdi",
+    names_prefix = "bdi_score_"
+  ) %>% 
+  select(id, visit, everything()) %>% 
+  mutate(
+    visit = fct_relevel(visit, "bl")
+  )
+
+pulse_df %>% 
+  ggplot(aes(x = visit, y = bdi)) +
+  geom_boxplot()
+
+```
+
 
